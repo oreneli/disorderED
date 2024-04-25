@@ -1,0 +1,47 @@
+WHOLEMOLECULES ENTITY0=13701-13720
+DUMPATOMS FILE=dump-plumed.xyz ATOMS=13701-13720 STRIDE=1000  
+
+t1: TORSION ATOMS=13712,13710,13704,13705
+t2: TORSION ATOMS=13702,13701,13709,13707
+t3: TORSION ATOMS=13709,13707,13708,13718
+t4: TORSION ATOMS=13701,13709,13707,13708
+cos_1: CUSTOM ...
+
+        ARG=t1
+        VAR=t1_0
+        FUNC=cos(t1_0-1.2)
+        PERIODIC=NO
+...
+
+cos_2: CUSTOM ...
+
+        ARG=t2
+        VAR=t2_0
+        FUNC=cos(t2_0-1.2)
+        PERIODIC=NO
+...
+cos_3: CUSTOM ...
+
+        ARG=t3
+        VAR=t3_0
+        FUNC=cos(t3_0-1.2)
+        PERIODIC=NO
+...
+cos_4: CUSTOM ...
+
+        ARG=t4
+        VAR=t4_0
+        FUNC=cos(t4_0-1.2)
+        PERIODIC=NO
+...
+
+
+CV: CUSTOM ...
+       
+       ARG=cos_1,cos_2,cos_3
+       VAR=t1,t2,t3
+       FUNC=-0.605*t1-0.745*t2-0.28*t3
+       PERIODIC=NO
+...   
+
+PRINT ARG=* FILE=COLVAR STRIDE=100
