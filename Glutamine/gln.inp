@@ -1,0 +1,63 @@
+units real
+atom_style full
+
+dimension 3
+boundary p p p
+
+bond_style hybrid harmonic
+angle_style hybrid harmonic
+dihedral_style hybrid charmm multi/harmonic
+special_bonds lj 0.0 0.0 0.5 coul 0.0 0.0 0.83333333
+
+read_data gln.data
+replicate 11 8 3
+group heat molecule 550
+group rest1 molecule <= 549
+group rest2 molecule >= 551
+group rest union rest1 rest2
+pair_style lj/cut/coul/long 9.0 9.0
+pair_modify tail yes
+kspace_style pppm 1e-4
+
+pair_coeff 1 1   0.2100000   2.9599219
+pair_coeff 2 2   0.1700000   3.2499985
+pair_coeff 3 3   0.1700000   3.2499985
+pair_coeff 4 4   0.0860000   3.3996695
+pair_coeff 5 5   0.1094000   3.3996695
+pair_coeff 6 6   0.0157000   1.0690785
+pair_coeff 7 7   0.0157000   1.9599772
+pair_coeff 8 8   0.0157000   2.6495328
+
+pair_modify mix arithmetic
+neighbor        2 bin
+neigh_modify    delay 5 every 1 check yes
+
+min_style cg
+minimize 1e-05 1e-05 10000 100000
+
+variable TK equal 300.0
+variable PBAR equal 1.0
+
+velocity all create ${TK} 12345
+fix 1 all momentum 100 linear 1 1 1 angular
+fix TPSTAT all npt temp ${TK} ${TK} 100 tri ${PBAR} ${PBAR} 1000 
+run 100000
+write_data thermo.dat
+unfix TPSTAT
+
+thermo 1
+thermo_style custom step cpu etotal ke pe evdwl ecoul elong temp press vol density
+
+velocity heat create 1000 54564
+fix nvt1 rest nvt temp 300 300 100
+fix nvt2 heat nvt temp 1000 1000 100
+fix     	0 all plumed plumedfile plumed.dat outfile p.log
+
+
+dump TRAJ all custom 1000 dump.lammpstrj id mol type element q xu yu zu
+dump_modify TRAJ element O N N C C H H H
+
+run 500000
+write_data final.dat
+
+

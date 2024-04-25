@@ -1,0 +1,62 @@
+WHOLEMOLECULES ENTITY0=10981-11000
+DUMPATOMS FILE=dump-plumed.xyz ATOMS=10981-11000 STRIDE=1000  
+
+t1: TORSION ATOMS=10991,10984,10987,10994
+t2: TORSION ATOMS=10981,10986,10987,10984
+t3: TORSION ATOMS=10984,10987,10988,10989
+t4: TORSION ATOMS=10987,10988,10989,10990
+t5: TORSION ATOMS=10985,10990,10989,10988
+t6: TORSION ATOMS=10989,10990,10985,10999
+
+cos_1: CUSTOM ...
+
+        ARG=t1
+        VAR=t1_0
+        FUNC=cos(t1_0)
+        PERIODIC=NO
+...
+
+cos_2: CUSTOM ...
+
+        ARG=t2
+        VAR=t2_0
+        FUNC=cos(t2_0)
+        PERIODIC=NO
+...
+cos_3: CUSTOM ...
+
+        ARG=t3
+        VAR=t3_0
+        FUNC=cos(t3_0)
+        PERIODIC=NO
+...
+cos_4: CUSTOM ...
+
+        ARG=t4
+        VAR=t4_0
+        FUNC=cos(t4_0)
+        PERIODIC=NO
+...
+cos_5: CUSTOM ...
+
+        ARG=t5
+        VAR=t5_0
+        FUNC=cos(t5_0)
+        PERIODIC=NO
+...
+cos_6: CUSTOM ...
+
+        ARG=t6
+        VAR=t6_0
+        FUNC=cos(t6_0)
+        PERIODIC=NO
+...
+
+CV: CUSTOM ...
+	ARG=cos_1,cos_2,cos_3,cos_4,cos_5,cos_6
+	VAR=t1,t2,t3,t4,t5,t6
+	FUNC=-0.43248*t1-0.44294*t2+0.55165*t3-0.54294*t4-0.12162*t5-0.05365*t6
+	PERIODIC=NO
+...
+
+PRINT ARG=* FILE=COLVAR STRIDE=100
